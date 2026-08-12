@@ -1,7 +1,9 @@
-cmake_minimum_required(VERSION 4.2)
-project(Sokoban)
+cmake_minimum_required(VERSION 3.28)
+project(Sokoban LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
 include(FetchContent)
 
@@ -16,4 +18,21 @@ add_executable(Sokoban src/main.cpp
         src/Views/ConsoleView.cpp
         src/Views/ConsoleView.h)
 
-target_link_libraries(Sokoban raylib)
+if (WIN32 AND MINGW)
+    target_link_options(Sokoban PRIVATE
+            -static-libgcc
+            -static-libstdc++
+    )
+
+    target_link_libraries(Sokoban PRIVATE
+        raylib
+
+        "LINKER:--whole-archive"
+        "C:/msys64/ucrt64/lib/libwinpthread.a"
+        "LINKER:--no-whole-archive"
+    )
+else ()
+    target_link_libraries(Sokoban PRIVATE
+            raylib
+    )
+endif()
