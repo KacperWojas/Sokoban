@@ -1,15 +1,19 @@
-#include <raylib.h>
+#include "Views/ConsoleView.h"
 
 int main()
 {
-    InitWindow(640, 480, "raylib window");
-
-    while (!WindowShouldClose())
+    std::vector<std::vector<Tile>> board;
+    for (int row = 0; row < 5; row++)
     {
-        BeginDrawing();
-            ClearBackground(RAYWHITE);
-            DrawText("TEXT", 190, 200, 20, LIGHTGRAY);
-        EndDrawing();
+        std::vector<Tile> boardRow;
+        for (int col = 0; col < 5; col++)
+            boardRow.push_back(Tile::WALL);
+        board.push_back(boardRow);
     }
+    ConsoleView::init();
+    ConsoleView::drawBoard(board);
+    ConsoleView::drawTile(1,1,Tile::PLAYER);
+    ConsoleView::onExit();
+
     return 0;
 }
