@@ -98,6 +98,8 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           path: release
+          pattern: Sokoban-*
+          merge-multiple: 'false'
 
       - name: Show downloaded files
         run: |
@@ -111,5 +113,5 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: Sokoban ${{ github.ref_name }}
           files: |
-            release/*
+            release/**/*
             fail_on_unmatched_files: true
