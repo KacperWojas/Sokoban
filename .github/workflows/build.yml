@@ -33,6 +33,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libx11-dev \
+            libxrandr-dev \
+            libxinerama-dev \
+            libxcursor-dev \
+            libxi-dev
+
       - name: Configure CMake
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 
