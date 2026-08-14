@@ -57,13 +57,28 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          Rename-Item "build/Sokoban.exe" "Sokoban-${{ matrix.name }}.exe"
+          $exe = Get-ChildItem -Path build -Filter "Sokoban.exe" -Recurse | Select-Object -First 1
+          if (-not $exe) {
+              Write-Host "Couldn't find Sokoban.exe:"
+              Get-ChildItem build -Recurse
+              exit 1
+          }
+
+          Rename-Item $exe.FullName "Sokoban-${{ matrix.name }}.exe"
 
       - name: Rename Unix executable
         if: runner.os != 'Windows'
         shell: bash
         run: |
-          mv "build/Sokoban" "Sokoban-${{ matrix.name }}"
+          exe=$(find build -type f -name "Sokoban" | head -n 1)
+
+          if [ -z "$exe" ]; then
+            echo "Couldn't find Sokoban:"
+            find build -type f
+            exit 1
+          fi
+
+          mv "$exe" "Sokoban-${{ matrix.name }}"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
