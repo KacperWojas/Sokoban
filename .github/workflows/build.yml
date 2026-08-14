@@ -53,6 +53,13 @@ jobs:
       - name: Build
         run: cmake --build build --config Release
 
+      - name: Show build files
+        shell: bash
+        run: |
+          echo "=== BUILD DIRECTORY ==="
+          find build -type f -print
+          echo "======================="
+
       - name: Rename Windows executable
         if: runner.os == 'Windows'
         shell: pwsh
