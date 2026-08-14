@@ -98,10 +98,18 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           path: release
-          
+
+      - name: Show downloaded files
+        run: |
+          echo "=== RELEASE FILES ==="
+          find release -type f -print
+          echo "====================="
+
       - name: Create Release
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ github.ref_name }}
           name: Sokoban ${{ github.ref_name }}
-          files: release/**/*
+          files: |
+            release/*
+            fail_on_unmatched_files: true
