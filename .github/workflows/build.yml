@@ -53,46 +53,20 @@ jobs:
       - name: Build
         run: cmake --build build --config Release
 
-      - name: Show build files
+      - name: Rename executable
         shell: bash
         run: |
-          echo "=== BUILD DIRECTORY ==="
-          find build -type f -print
-          echo "======================="
-
-      - name: Rename Windows executable
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $exe = Get-ChildItem -Path build -Filter "Sokoban.exe" -Recurse | Select-Object -First 1
-          if (-not $exe) {
-              Write-Host "Couldn't find Sokoban.exe:"
-              Get-ChildItem build -Recurse
-              exit 1
-          }
-
-          Rename-Item $exe.FullName $exe.DirectoryName"/Sokoban-${{ matrix.name }}.exe"
-
-      - name: Rename Unix executable
-        if: runner.os != 'Windows'
-        shell: bash
-        run: |
-          exe=$(find build -type f -name "Sokoban" | head -n 1)
-
-          if [ -z "$exe" ]; then
-            echo "Couldn't find Sokoban:"
-            find build -type f
-            exit 1
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            mv build/Release/Sokoban.exe "Sokoban-${{ matrix.name }}.exe"
+          else
+            mv build/Sokoban "Sokoban-${{ matrix.name }}"
           fi
 
-          mv "$exe" "$(dirname "$exe")/Sokoban-${{ matrix.name }}"
-
-      - name: Upload artifact
+      - name: Upload executable
         uses: actions/upload-artifact@v7
         with:
           name: Sokoban-${{ matrix.name }}
-          path: |
-            build/**/Sokoban-${{ matrix.name }}*
+          path: Sokoban-${{ matrix.name }}*
           if-no-files-found: error
             
   release:
@@ -103,24 +77,20 @@ jobs:
       contents: write
 
     steps:
-      - name: Download all artifacts
+      - name: Download executables
         uses: actions/download-artifact@v8
         with:
           path: release
           pattern: Sokoban-*
-          merge-multiple: 'false'
+          merge-multiple: true
 
-      - name: Show downloaded files
-        run: |
-          echo "=== RELEASE FILES ==="
-          find release -type f -print
-          echo "====================="
+      - name: Show release files
+        run: ls -lah release
 
       - name: Create Release
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ github.ref_name }}
           name: Sokoban ${{ github.ref_name }}
-          files: |
-            release/**/*
+          files: release/*
           fail_on_unmatched_files: true
