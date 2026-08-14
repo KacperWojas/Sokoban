@@ -53,14 +53,17 @@ jobs:
       - name: Build
         run: cmake --build build --config Release
 
-      - name: Rename executable
+      - name: Rename Windows executable
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Rename-Item "build/Sokoban.exe" "Sokoban-${{ matrix.name }}.exe"
+
+      - name: Rename Unix executable
+        if: runner.os != 'Windows'
         shell: bash
         run: |
-          if: [ -f "build/Sokoban.exe" ]; then
-            mv "build/Sokoban.exe" "build/Sokoban-${{ matrix.name }}.exe"
-          else
-            mv "build/Sokoban" "build/Sokoban-${{ matrix.name }}"
-          fi
+          mv "build/Sokoban" "Sokoban-${{ matrix.name }}"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -84,6 +87,6 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ github.ref_name }}
-          name: Sokoban v${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          name: Sokoban ${{ github.ref_name }}
           files: release/**/*
