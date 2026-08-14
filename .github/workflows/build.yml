@@ -71,7 +71,7 @@ jobs:
               exit 1
           }
 
-          Rename-Item $exe.FullName "Sokoban-${{ matrix.name }}.exe"
+          Rename-Item $exe.FullName $exe.DirectoryName"/Sokoban-${{ matrix.name }}.exe"
 
       - name: Rename Unix executable
         if: runner.os != 'Windows'
@@ -85,13 +85,15 @@ jobs:
             exit 1
           fi
 
-          mv "$exe" "Sokoban-${{ matrix.name }}"
+          mv "$exe" "$(dirname "$exe")/Sokoban-${{ matrix.name }}"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
           name: Sokoban-${{ matrix.name }}
-          path: build/Sokoban-${{ matrix.name }}*
+          path: |
+            build/**/Sokoban-${{ matrix.name }}*
+          if-no-files-found: error
             
   release:
     needs: build
@@ -121,4 +123,4 @@ jobs:
           name: Sokoban ${{ github.ref_name }}
           files: |
             release/**/*
-            fail_on_unmatched_files: true
+          fail_on_unmatched_files: true
