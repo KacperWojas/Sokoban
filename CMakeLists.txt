@@ -18,21 +18,6 @@ add_executable(Sokoban src/main.cpp
         src/Views/ConsoleView.cpp
         src/Views/ConsoleView.h)
 
-if (WIN32 AND MINGW)
-    target_link_options(Sokoban PRIVATE
-            -static-libgcc
-            -static-libstdc++
-    )
-
-    target_link_libraries(Sokoban PRIVATE
+target_link_libraries(Sokoban PRIVATE
         raylib
-
-        "LINKER:--whole-archive"
-        "C:/msys64/ucrt64/lib/libwinpthread.a"
-        "LINKER:--no-whole-archive"
-    )
-else ()
-    target_link_libraries(Sokoban PRIVATE
-            raylib
-    )
-endif()
+)
