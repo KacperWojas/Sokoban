@@ -1,0 +1,48 @@
+name: Build Sokoban
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            name: Windows-x64
+
+          - os: windows-11-arm
+            name: Windows-ARM64
+
+          - os: ubuntu-latest
+            name: Linux-x64
+
+          - os: ubuntu-24.04-arm
+            name: Linux-ARM64
+
+          - os: macos-latest
+            name: macOS-ARM64
+
+          - os: macos-15-intel
+            name: macOS-x64
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Configure CMake
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sokoban-${{ matrix.name }}
+          path: |
+            build/Sokoban
+            build/Sokoban.exe
