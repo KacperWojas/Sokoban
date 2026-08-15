@@ -16,7 +16,7 @@ public:
     static void drawTile(int x, int y, Tile tile);
     static void drawBoard(const std::vector<std::vector<Tile>>& newBoard);
     static void init();
-    static void onExit();
+    static void exit();
 private:
     static void putStringAt(int x, int y, const std::string& s);
     static std::string tileToString(Tile tile);

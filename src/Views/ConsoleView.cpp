@@ -22,7 +22,7 @@ void ConsoleView::init()
     #endif
 }
 
-void ConsoleView::onExit()
+void ConsoleView::exit()
 {
     std::cin >> std::ws;
     std::cout << "\033[?1049l";
